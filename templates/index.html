@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Kyok Pa - Alunos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header class="topo">
+        <h1>KYOK PA • CADASTRO DE ALUNOS</h1>
+        <p>Sistema da academia</p>
+    </header>
+
+    <main class="container">
+
+        <div class="top-bar">
+            <a href="/cadastrar" class="btn">Cadastrar Novo Aluno</a>
+        </div>
+
+        <div class="tabela-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>Faixa</th>
+                        <th>Local</th>
+                        <th>Professor</th>
+                        <th>Status</th>
+                        <th>Telefone</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for aluno in alunos %}
+                    <tr>
+                        <td>
+                            {% if aluno["foto"] %}
+                                <img src="{{ url_for('static', filename='uploads/' + aluno['foto']) }}" class="foto">
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ aluno["nome"] }}</td>
+                        <td>{{ aluno["idade"] }}</td>
+                        <td>{{ aluno["faixa"] }}</td>
+                        <td>{{ aluno["local"] }}</td>
+                        <td>{{ aluno["professor"] }}</td>
+                        <td>{{ aluno["status"] }}</td>
+                        <td>{{ aluno["telefone"] }}</td>
+                        <td class="acoes-tabela">
+                            <a href="/editar/{{ aluno['id'] }}" class="btn-editar">Editar</a>
+                            <a href="/excluir/{{ aluno['id'] }}" class="btn-excluir" onclick="return confirm('Deseja excluir este aluno?')">Excluir</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatórios - Kyok Pa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topo">
+    <h1>RELATÓRIO DE ALUNOS</h1>
+    <p>Quantidade por local de treino</p>
+</header>
+
+<nav class="menu">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('alunos') }}">Alunos</a>
+    <a href="{{ url_for('cadastrar_aluno') }}">Cadastrar</a>
+    <a href="{{ url_for('relatorios') }}">Relatórios</a>
+    <a href="{{ url_for('logout') }}">Sair</a>
+</nav>
+
+<main class="container">
+
+    <div class="cards">
+
+        {% for item in dados %}
+        <div class="card">
+            <span>{{ item["local"] }}</span>
+            <strong>{{ item["total"] }} alunos</strong>
+        </div>
+        {% endfor %}
+
+    </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Aluno - Kyok Pa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="topo">
+        <h1>CADASTRAR ALUNO</h1>
+        <p>Preencha os dados do atleta</p>
+    </header>
+
+    <nav class="menu">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('alunos') }}">Alunos</a>
+        <a href="{{ url_for('cadastrar_aluno') }}">Cadastrar Aluno</a>
+        <a href="{{ url_for('logout') }}">Sair</a>
+    </nav>
+
+    <main class="form-container">
+        <form method="post" enctype="multipart/form-data" class="formulario">
+            <label>Nome do aluno</label>
+            <input type="text" name="nome" required>
+
+            <label>Idade</label>
+            <input type="text" name="idade" required>
+
+            <label>Faixa</label>
+            <input type="text" name="faixa" required>
+
+            <label>Data de nascimento</label>
+            <input type="text" name="nascimento" placeholder="dd/mm/aaaa" required>
+
+            <label>Responsável</label>
+            <input type="text" name="responsavel" required>
+
+            <label>Telefone</label>
+            <input type="text" name="telefone" required>
+
+            <label>Local</label>
+            <select name="local" required>
+                {% for item in locais %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Professor</label>
+            <select name="professor" required>
+                {% for item in professores %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Status</label>
+            <select name="status" required>
+                {% for item in status_opcoes %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Data de matrícula</label>
+            <input type="text" name="matricula" placeholder="dd/mm/aaaa" required>
+
+            <label>Observações</label>
+            <textarea name="observacoes" rows="4"></textarea>
+
+            <label>Foto do aluno</label>
+            <input type="file" name="foto" accept=".png,.jpg,.jpeg,.webp">
+
+            <div class="linha-botoes">
+                <button type="submit" class="btn">Salvar Aluno</button>
+                <a href="{{ url_for('alunos') }}" class="btn-voltar">Voltar</a>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

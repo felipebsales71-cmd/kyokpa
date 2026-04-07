@@ -1,0 +1,244 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+}
+
+.topo {
+    text-align: center;
+    padding: 24px 16px;
+    border-bottom: 5px solid #ff1a1a;
+    background: #0d0d0d;
+}
+
+.topo h1 {
+    margin: 0;
+    font-size: 34px;
+}
+
+.topo p {
+    margin-top: 10px;
+    color: #ddd;
+}
+
+.menu {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    background: #1b1b1d;
+    padding: 14px;
+    border-bottom: 1px solid #333;
+    flex-wrap: wrap;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    background: #c1121f;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.container {
+    padding: 20px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.card {
+    background: #1d1d1f;
+    padding: 20px;
+    border-radius: 10px;
+    border-top: 4px solid #c1121f;
+}
+
+.card span {
+    display: block;
+    color: #ccc;
+    margin-bottom: 8px;
+}
+
+.card strong {
+    font-size: 30px;
+}
+
+.top-bar {
+    margin: 18px 0;
+}
+
+.btn,
+button {
+    background: #c1121f;
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-voltar {
+    background: #555;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.filtros {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.filtros input,
+.filtros select,
+.formulario input,
+.formulario select,
+.formulario textarea {
+    padding: 12px;
+    border: 1px solid #c1121f;
+    border-radius: 8px;
+    min-width: 180px;
+    font-size: 14px;
+}
+
+.tabela-box {
+    overflow-x: auto;
+    background: #1d1d1f;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    color: black;
+}
+
+th {
+    background: #ff1a1a;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.foto {
+    width: 50px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.foto-grande {
+    width: 140px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #c1121f;
+}
+
+.acoes-tabela {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-editar {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-excluir {
+    background: transparent;
+    color: red;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.flash-msg {
+    background: #1d1d1f;
+    border-left: 4px solid #c1121f;
+    padding: 12px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+}
+
+.form-container {
+    max-width: 850px;
+    margin: 30px auto;
+    background: #1d1d1f;
+    padding: 24px;
+    border-radius: 12px;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.formulario label {
+    font-weight: bold;
+    color: white;
+    margin-top: 6px;
+}
+
+.linha-botoes {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.login-body {
+    background: #111;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    width: 360px;
+    background: #1d1d1f;
+    padding: 30px;
+    border-radius: 12px;
+    border-top: 5px solid #c1121f;
+}
+
+.login-box h1 {
+    margin: 0;
+    text-align: center;
+}
+
+.login-box p {
+    text-align: center;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.login-info {
+    margin-top: 18px;
+    color: #ccc;
+    font-size: 14px;
+    text-align: center;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Kyok Pa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="topo">
+        <h1>KYOK PA • PAINEL</h1>
+        <p>Bem-vindo, {{ session.usuario_nome }}</p>
+    </header>
+
+    <nav class="menu">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('alunos') }}">Alunos</a>
+        <a href="{{ url_for('cadastrar_aluno') }}">Cadastrar Aluno</a>
+        <a href="{{ url_for('logout') }}">Sair</a>
+    </nav>
+
+    <main class="container">
+        <section class="cards">
+            <div class="card">
+                <span>Total de alunos</span>
+                <strong>{{ total }}</strong>
+            </div>
+            <div class="card">
+                <span>Ativos</span>
+                <strong>{{ ativos }}</strong>
+            </div>
+            <div class="card">
+                <span>Inativos</span>
+                <strong>{{ inativos }}</strong>
+            </div>
+            <div class="card">
+                <span>Trancados</span>
+                <strong>{{ trancados }}</strong>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+<a href="{{ url_for('relatorios') }}">Relatórios</a>
