@@ -15,6 +15,7 @@
         <a href="{{ url_for('dashboard') }}">Dashboard</a>
         <a href="{{ url_for('alunos') }}">Alunos</a>
         <a href="{{ url_for('cadastrar_aluno') }}">Cadastrar Aluno</a>
+        <a href="{{ url_for('relatorios') }}">Relatórios</a>
         <a href="{{ url_for('logout') }}">Sair</a>
     </nav>
 
@@ -24,26 +25,6 @@
                 <div class="flash-msg">{{ messages[0] }}</div>
             {% endif %}
         {% endwith %}
-
-        <form method="get" class="filtros">
-            <input type="text" name="busca" placeholder="Buscar nome" value="{{ busca }}">
-
-            <select name="local">
-                <option value="">Todos os locais</option>
-                {% for item in locais %}
-                    <option value="{{ item }}" {% if item == local_filtro %}selected{% endif %}>{{ item }}</option>
-                {% endfor %}
-            </select>
-
-            <select name="status">
-                <option value="">Todos os status</option>
-                {% for item in status_opcoes %}
-                    <option value="{{ item }}" {% if item == status_filtro %}selected{% endif %}>{{ item }}</option>
-                {% endfor %}
-            </select>
-
-            <button type="submit">Filtrar</button>
-        </form>
 
         <div class="top-bar">
             <a href="{{ url_for('cadastrar_aluno') }}" class="btn">Cadastrar Novo Aluno</a>
@@ -65,34 +46,37 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for aluno in alunos %}
-                    <tr>
-                        <td>
-                            {% if aluno["foto"] %}
-                                <img src="{{ url_for('static', filename='uploads/' + aluno['foto']) }}" class="foto">
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td>{{ aluno["nome"] }}</td>
-                        <td>{{ aluno["idade"] }}</td>
-                        <td>{{ aluno["faixa"] }}</td>
-                        <td>{{ aluno["local"] }}</td>
-                        <td>{{ aluno["professor"] }}</td>
-                        <td>{{ aluno["status"] }}</td>
-                        <td>{{ aluno["telefone"] }}</td>
-                        <td class="acoes-tabela">
-                            <a href="{{ url_for('editar_aluno', aluno_id=aluno['id']) }}" class="btn-editar">Editar</a>
-                            <form method="post" action="{{ url_for('excluir_aluno', aluno_id=aluno['id']) }}" style="display:inline;">
-                                <button type="submit" class="btn-excluir" onclick="return confirm('Deseja excluir este aluno?')">Excluir</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% if not alunos %}
-                    <tr>
-                        <td colspan="9" style="text-align:center;">Nenhum aluno encontrado.</td>
-                    </tr>
+                    {% if alunos %}
+                        {% for aluno in alunos %}
+                        <tr>
+                            <td>
+                                {% if aluno["foto"] %}
+                                    <img src="{{ url_for('static', filename='uploads/' + aluno['foto']) }}" class="foto">
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ aluno["nome"] }}</td>
+                            <td>{{ aluno["idade"] }}</td>
+                            <td>{{ aluno["faixa"] }}</td>
+                            <td>{{ aluno["local"] }}</td>
+                            <td>{{ aluno["professor"] }}</td>
+                            <td>{{ aluno["status"] }}</td>
+                            <td>{{ aluno["telefone"] }}</td>
+                            <td class="acoes-tabela">
+                                <a href="{{ url_for('editar_aluno', id=aluno['id']) }}" class="btn-editar">Editar</a>
+                                <a href="{{ url_for('excluir_aluno', id=aluno['id']) }}"
+                                   class="btn-excluir"
+                                   onclick="return confirm('Deseja excluir este aluno?')">
+                                   Excluir
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="9" style="text-align:center;">Nenhum aluno cadastrado.</td>
+                        </tr>
                     {% endif %}
                 </tbody>
             </table>
@@ -100,4 +84,3 @@
     </main>
 </body>
 </html>
-<a href="{{ url_for('relatorios') }}">Relatórios</a>
