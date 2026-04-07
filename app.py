@@ -14,8 +14,6 @@ UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
-
 LOCAIS = [
     "MARIA NILCE BRANDÃO",
     "CLARETIANO",
@@ -47,13 +45,19 @@ def conectar():
     return conn
 
 
+def garantir_coluna(conn, tabela, coluna, definicao):
+    colunas = [linha["name"] for linha in conn.execute(f"PRAGMA table_info({tabela})").fetchall()]
+    if coluna not in colunas:
+        conn.execute(f"ALTER TABLE {tabela} ADD COLUMN {coluna} {definicao}")
+
+
 def criar_banco():
     conn = conectar()
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            usuario TEXT,
+            usuario TEXT UNIQUE,
             senha TEXT,
             nome TEXT,
             tipo TEXT
@@ -78,16 +82,47 @@ def criar_banco():
         )
     """)
 
-    admin = conn.execute(
-        "SELECT * FROM usuarios WHERE usuario = ?",
-        ("admin",)
-    ).fetchone()
+    # Garante colunas caso o banco já existisse de versões antigas
+    garantir_coluna(conn, "usuarios", "usuario", "TEXT")
+    garantir_coluna(conn, "usuarios", "senha", "TEXT")
+    garantir_coluna(conn, "usuarios", "nome", "TEXT")
+    garantir_coluna(conn, "usuarios", "tipo", "TEXT")
 
-    if not admin:
-        conn.execute("""
-            INSERT INTO usuarios (usuario, senha, nome, tipo)
-            VALUES (?, ?, ?, ?)
-        """, ("admin", "123", "Administrador", "admin"))
+    garantir_coluna(conn, "alunos", "nome", "TEXT")
+    garantir_coluna(conn, "alunos", "idade", "TEXT")
+    garantir_coluna(conn, "alunos", "faixa", "TEXT")
+    garantir_coluna(conn, "alunos", "nascimento", "TEXT")
+    garantir_coluna(conn, "alunos", "responsavel", "TEXT")
+    garantir_coluna(conn, "alunos", "telefone", "TEXT")
+    garantir_coluna(conn, "alunos", "local", "TEXT")
+    garantir_coluna(conn, "alunos", "professor", "TEXT")
+    garantir_coluna(conn, "alunos", "status", "TEXT")
+    garantir_coluna(conn, "alunos", "matricula", "TEXT")
+    garantir_coluna(conn, "alunos", "observacoes", "TEXT")
+    garantir_coluna(conn, "alunos", "foto", "TEXT")
+
+    usuarios_padrao = [
+        ("admin", "123", "Administrador", "admin"),
+        ("wellington", "123", "Wellington Sales", "professor"),
+        ("felipe", "123", "Felipe Sales", "professor"),
+        ("lohana", "123", "Lohana Sales", "professor"),
+        ("kayo", "123", "Kayo Naveca", "professor"),
+        ("jennifer", "123", "Jennifer Melo", "professor"),
+        ("thiago", "123", "Thiago Benjumea", "professor"),
+        ("gleidjanison", "123", "Gleidjanison Lima", "professor"),
+    ]
+
+    for usuario, senha, nome, tipo in usuarios_padrao:
+        existente = conn.execute(
+            "SELECT * FROM usuarios WHERE usuario = ?",
+            (usuario,)
+        ).fetchone()
+
+        if not existente:
+            conn.execute("""
+                INSERT INTO usuarios (usuario, senha, nome, tipo)
+                VALUES (?, ?, ?, ?)
+            """, (usuario, senha, nome, tipo))
 
     conn.commit()
     conn.close()
@@ -107,8 +142,8 @@ def login_obrigatorio(func):
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        usuario = request.form["usuario"]
-        senha = request.form["senha"]
+        usuario = request.form["usuario"].strip()
+        senha = request.form["senha"].strip()
 
         conn = conectar()
         user = conn.execute(
@@ -119,7 +154,10 @@ def login():
 
         if user:
             session["logado"] = True
-            session["usuario_nome"] = user["nome"]
+            session["usuario_id"] = user["id"]
+            session["usuario_login"] = user["usuario"]
+            session["usuario_nome"] = user["nome"] if user["nome"] else user["usuario"]
+            session["usuario_tipo"] = user["tipo"] if user["tipo"] else "professor"
             return redirect(url_for("dashboard"))
         else:
             flash("Login inválido")
@@ -141,10 +179,19 @@ def dashboard():
     conn = conectar()
 
     total = conn.execute("SELECT COUNT(*) as t FROM alunos").fetchone()["t"]
+    ativos = conn.execute("SELECT COUNT(*) as t FROM alunos WHERE status = 'ATIVO'").fetchone()["t"]
+    inativos = conn.execute("SELECT COUNT(*) as t FROM alunos WHERE status = 'INATIVO'").fetchone()["t"]
+    trancados = conn.execute("SELECT COUNT(*) as t FROM alunos WHERE status = 'TRANCADO'").fetchone()["t"]
 
     conn.close()
 
-    return render_template("dashboard.html", total=total)
+    return render_template(
+        "dashboard.html",
+        total=total,
+        ativos=ativos,
+        inativos=inativos,
+        trancados=trancados
+    )
 
 
 # ================= LISTA =================
@@ -180,7 +227,7 @@ def cadastrar_aluno():
         foto = request.files.get("foto")
         nome_foto = ""
 
-        if foto and "." in foto.filename:
+        if foto and foto.filename and "." in foto.filename:
             nome_foto = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + secure_filename(foto.filename)
             foto.save(os.path.join(UPLOAD_FOLDER, nome_foto))
 
@@ -197,6 +244,7 @@ def cadastrar_aluno():
         conn.commit()
         conn.close()
 
+        flash("Aluno cadastrado com sucesso.")
         return redirect(url_for("alunos"))
 
     return render_template(
@@ -215,10 +263,33 @@ def editar_aluno(id):
     conn = conectar()
     aluno = conn.execute("SELECT * FROM alunos WHERE id = ?", (id,)).fetchone()
 
+    if not aluno:
+        conn.close()
+        flash("Aluno não encontrado.")
+        return redirect(url_for("alunos"))
+
     if request.method == "POST":
+        foto = request.files.get("foto")
+        nome_foto = aluno["foto"]
+
+        if foto and foto.filename and "." in foto.filename:
+            nome_foto = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + secure_filename(foto.filename)
+            foto.save(os.path.join(UPLOAD_FOLDER, nome_foto))
+
         conn.execute("""
-            UPDATE alunos SET nome=?, idade=?, faixa=?, nascimento=?, responsavel=?, telefone=?,
-            local=?, professor=?, status=?, matricula=?, observacoes=?
+            UPDATE alunos SET
+                nome=?,
+                idade=?,
+                faixa=?,
+                nascimento=?,
+                responsavel=?,
+                telefone=?,
+                local=?,
+                professor=?,
+                status=?,
+                matricula=?,
+                observacoes=?,
+                foto=?
             WHERE id=?
         """, (
             request.form["nome"],
@@ -232,10 +303,13 @@ def editar_aluno(id):
             request.form["status"],
             request.form["matricula"],
             request.form["observacoes"],
+            nome_foto,
             id
         ))
         conn.commit()
         conn.close()
+
+        flash("Aluno atualizado com sucesso.")
         return redirect(url_for("alunos"))
 
     conn.close()
@@ -257,6 +331,8 @@ def excluir_aluno(id):
     conn.execute("DELETE FROM alunos WHERE id = ?", (id,))
     conn.commit()
     conn.close()
+
+    flash("Aluno excluído com sucesso.")
     return redirect(url_for("alunos"))
 
 
